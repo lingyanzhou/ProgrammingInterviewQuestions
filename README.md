@@ -182,7 +182,7 @@ class Singleton {
 
 - 定义
 
-reflection is the ability of a computer program to examine, introspect, and modify its own structure and behavior at runtime.
+Reflection is the ability of a computer program to examine, introspect, and modify its own structure and behavior at runtime.
 
 - 例子
 
@@ -213,6 +213,20 @@ Method m = foo.getClass().getDeclaredMethod("hello", new Class<?>[0]);
 m.invoke(foo);
 
 ```
+
+## AOP 自我调用问题
+
+[Spring AOP中自我调用的问题](https://blog.csdn.net/zknxx/article/details/72585822)
+
+## ThreadLocal
+
+[ThreadLocal-面试必问深度解析](https://www.jianshu.com/p/98b68c97df9b)
+
+## ThreadLocal, WeakReference, 与GC
+
+[ThreadLocal内存泄漏真因探究](https://www.jianshu.com/p/a1cd61fa22da)
+
+[Java中的四种引用类型（强、软、弱、虚）](https://www.jianshu.com/p/ca6cbc246d20)
 
 # Operating System
 
