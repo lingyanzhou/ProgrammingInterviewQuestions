@@ -157,6 +157,26 @@ class Singleton {
 
 # 编程理论
 
+## 计算机语分类
+
+- 编译型和解释型
+  
+  - 编译型语言首先是将源代码编译生成机器指令，再由机器运行机器码(二进制)
+  - 解释型语言的源代码不是直接翻译成机器指令，而是先翻译成中间代码，再由解释器对中间代码进行解释运行。
+
+- 动态语言和静态语言
+
+  - 动态语言是一类在运行时可以改变其结构的语言。
+  - 运行时结构不可变的语言就是静态语言。
+
+- 动态类型语言和静态类型语言
+
+  - 动态类型语言在运行的时候（runtime）才检查数据类型。
+  - 静态类型语言的数据类型是在编译期间确定的，编写代码的时候要明确确定变量的数据类型。
+
+- 强类型和弱类型语言
+
+
 ## 函数式编程 (Functional Programming)
 
 - 定义
@@ -252,27 +272,33 @@ public class StringBuf {
 ```
 
 ```java
-	// 通过类名获取类
-	Class clazz = Class.forName("lzhou.learning.concurrency.concurrency.StringBuf");
+// 通过类名获取类
+Class clazz = Class.forName("lzhou.learning.concurrency.concurrency.StringBuf";
 	
-	// 获取所有注释
-	Annotation[] annotations = clazz.getAnnotations();
-	Assert.assertEquals(1, annotations.length);
-	// 获取注释
-	Annotation deprecatedAnnotation = clazz.getAnnotation(Deprecated.class);
-	Assert.assertNotNull(deprecatedAnnotation);
+// 获取所有注释
+Annotation[] annotations = clazz.getAnnotations();
+Assert.assertEquals(1, annotations.length);
+// 获取注释
+Annotation deprecatedAnnotation =clazz.getAnnotation(Deprecated.class);
+Assert.assertNotNull(deprecatedAnnotation);
 	
-	// 通过参数列表获取公有构造函数
-	StringBuf obj = (StringBuf) clazz.getConstructor(String.class).newInstance("Test");
+// 通过参数列表获取公有构造函数
+StringBuf obj = (StringBuf) clazz.getConstructor(String.class).newInstance("Test");
 	
-	// 通过方法名名称和方法参数, 获取公有方法
-	String val = (String) clazz.getMethod("toUpperCase", new Class<?>[0]).invoke(obj);
-	Assert.assertEquals("TEST", val);
+// 通过方法名名称和方法参数, 获取公有方法
+String val = (String) clazz.getMethod("toUpperCase",new Class<?>[0]).invoke(obj);
+Assert.assertEquals("TEST", val);
 	
-	// 通过名称获取公有字段
-    val = (String) clazz.getField("str").get(obj);
-    Assert.assertEquals("Test", val);
+// 通过名称获取公有字段
+val = (String) clazz.getField("str").get(obj);
+Assert.assertEquals("Test", val);
 ```
+
+## JVM类加载过程
+
+![JVM类加载过程](img/JVM-class-loading-details.png)
+
+[JVM Architecture – Understanding JVM Internals](https://www.javainterviewpoint.com/java-virtual-machine-architecture-in-java/)
 
 ## JVM引用类型
 
@@ -420,6 +446,8 @@ public void run() {
 
   - 方便传参
 
+	- 适用于线程由框架管理时
+
     ```java
 	ThreadLocal<Integer> threadId = ThreadLocal.withInitial(()->curId.getAndIncrement());
     
@@ -429,6 +457,8 @@ public void run() {
     ```
 
   - 线程私有的对象
+	- 适用于该对象不需要在多线程之间共享；该对象需要在线程内被传递; 该对象的方法线程不安全时。
+	- 典型场景: 数据库连接管理，线程会话管理等场景。
 
     ```java
 	private static final ThreadLocal<Integer> simpleDateTimeFormat = ThreadLocal.withInitial(()->  new SimpleDateFormat());
@@ -437,8 +467,6 @@ public void run() {
             System.out.println(simpleDateTimeFormat.get().format(new Date()));
         };
     ```
-
-  使用ThreadLocal的典型场景正如数据库连接管理，线程会话管理等场景，只适用于(一)该对象不需要在多线程之间共享；(二)该对象需要在线程内被传递。
 
 - 内存泄漏
 
@@ -463,8 +491,25 @@ key 使用弱引用：引用的ThreadLocal的对象被回收了，由于ThreadLo
 
 []()
 
+# Redis
+
+## Redis常见数据结构
+
+- String
+- List
+- Hash
+- Set
+- ZSet
+- Hyperloglog
+- Pub/Sub
+- Bitmap
+- Geo
+
+[redis常用数据结构解析](https://www.cnblogs.com/jxhd1/p/6528612.html)
+
 # Operating System
 
 ## 进程状态
 
 ![process state](img/process-state.webp)
+
