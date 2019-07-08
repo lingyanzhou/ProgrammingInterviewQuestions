@@ -202,7 +202,6 @@ class Singleton {
   - 引用透明性: 函数的返回值只依赖于其输入值
   - 柯里化 (Currying) : 是把接受多个参数的函数变换成接受一个单一参数(最初函数的第一个参数)的函数，并且返回接受余下的参数且返回结果的新函数的技术
 
-
 - 优点
 
   - 代码更为简洁，可读性更强
@@ -217,9 +216,91 @@ class Singleton {
 
 [函数式编程](https://baike.baidu.com/item/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/4035031?fr=aladdin)
 
-### 面向对象编程
+## JVM结束线程的方法
 
+- 线程内return 
 
+- 线程内抛出异常
+- 调用Thread.stop() (已过时)
+
+强制终止线程, 不保证线程逻辑完整, 和synchronized代码块里的原子性。
+
+- 退出JVM
+
+[[改善Java代码]不使用stop方法停止线程](https://www.cnblogs.com/DreamDrive/p/5623804.html)
+
+## Thread.interrupt()
+
+- 本线程中断自己是被允许的；其它线程调用本线程的interrupt()方法时，会通过checkAccess()检查权限。这有可能抛出SecurityException异常。
+- 如果本线程是处于阻塞状态：调用线程的wait(), wait(long)或wait(long, int)会让它进入等待(阻塞)状态，或者调用线程的join(), join(long), join(long, int), sleep(long), sleep(long, int)也会让它进入阻塞状态。若线程在阻塞状态时，调用了它的interrupt()方法，那么它的“中断状态”会被清除并且会收到一个InterruptedException异常。
+- 如果线程被阻塞在一个Selector选择器中，那么通过interrupt()中断它时；线程的中断标记会被设置为true，并且它会立即从选择操作中返回。
+- 如果不属于前面所说的情况，那么通过interrupt()中断线程时，它的中断标记会被设置为“true”。
+- 中断一个“已终止的线程”不会产生任何操作。
+
+## 使用interrupt()优雅地中断线程
+
+- 终止处于“阻塞状态”的线程
+
+当线程由于被调用了sleep(), wait(), join()等方法而进入阻塞状态；若此时调用线程的interrupt()将线程的中断标记设为true。由于处于阻塞状态，中断标记会被清除，同时产生一个InterruptedException异常
+
+```java
+public void run() {
+    try {
+        while (true) {
+            // 执行任务...
+        }
+    } catch (InterruptedException ie) {  
+        // 由于产生InterruptedException异常，退出while(true)循环，线程终止！
+    }
+}
+```
+
+- 终止处于“运行状态”的线程
+
+  - 通过“中断标记”终止线程
+
+```java
+@Override
+public void run() {
+    while (!isInterrupted()) {
+        // 执行任务...
+    }
+}
+```
+
+  - 通过“额外添加标记”终止线程
+
+```java
+private volatile boolean flag = true;
+public void stopThread() {
+    flag = false;
+}
+
+@Override
+public void run() {
+    while (flag) {
+        // 执行任务...
+    }
+}
+```
+
+  - 综合线程处于“阻塞状态”和“运行状态”的终止方式
+
+```java
+@Override
+public void run() {
+    try {
+        // 1. isInterrupted()保证，只要中断标记为true就终止线程。
+        while (!isInterrupted()) {
+            // 执行任务...
+        }
+    } catch (InterruptedException ie) {  
+        // 2. InterruptedException异常保证，当InterruptedException异常产生时，线程被终止。
+    }
+}
+```
+
+[Java多线程系列--“基础篇”09之 interrupt()和线程终止方式](https://www.cnblogs.com/skywang12345/p/3479949.html)
 
 ## 反射 (Reflection)
 
