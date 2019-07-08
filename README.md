@@ -1,4 +1,4 @@
-# 设计模式 (Design Pattern)
+# 面向对象设计模式 (OOP Design Pattern)
 
 ## 单例模式 (Singleton)
 
@@ -155,28 +155,7 @@ class Singleton {
 
 禁止两类丢失更新，禁止脏读, 不可重复度和禁止幻读。
 
-
-# 编程基础 / Java
-
-## 并发性质
-
-- 原子性
-
-一个操作或者多个操作，要么全部执行并且执行的过程不会被任何因素打断，要么就都不执行。
-
-- 有序性
-
-即程序执行的顺序按照代码的先后顺序执行。
-
-- 可见性
-
-可见性是指当一个线程修改了共享变量后，其他线程能够立即得知这个修改。
-
-注: volatile关键字保证有序性和可见性, 但不保证原子性。 Synchronized关键字保证有序性, 可见性和保证原子性。
-
-## JVM线程状态
-
-![JVM thread state](img/jvm-thread-state.png)
+# 编程理论
 
 ## 函数式编程 (Functional Programming)
 
@@ -215,6 +194,123 @@ class Singleton {
 [函数式编程思想概论](https://www.ibm.com/developerworks/cn/java/j-understanding-functional-programming-1/index.html)
 
 [函数式编程](https://baike.baidu.com/item/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/4035031?fr=aladdin)
+
+# Java基础
+
+## Java IO流
+
+![Java IO Streams](img/Java-IO-streams.png)
+
+[Java总结：Java 流(Stream)、文件(File)和IO](https://www.cnblogs.com/52fhy/p/8232825.html)
+
+- Apache Common IO: IOUtils 常用操作
+
+```java
+IOUtils::copy(inputstream,outputstream)
+IOUtils::copy(inputstream,writer)
+IOUtils::copy(inputstream,writer,encoding)
+IOUtils::copy(reader,outputstream)
+IOUtils::copy(reader,writer)
+IOUtils::copy(reader,writer,encoding)
+
+IOUtils::copyLarge(reader,writer) 默认会用1024*4的buffer来读取
+IOUtils::copyLarge(reader,writer,buffer)
+
+IOUtils.toBufferedInputStream(inputstream)
+```
+
+## 反射 (Reflection)
+
+- 定义
+
+通过采用某种机制来实现对自己行为的描述（self-representation）和监测（examination），并能根据自身行为的状态和结果，调整或修改应用所描述行为的状态和相关的语义。
+
+- 实例
+
+Reflection allows inspection of classes, interfaces, fields and methods at runtime without knowing the names of the interfaces, fields, methods at compile time. It also allows instantiation of new objects and invocation of methods.
+
+  - Discover and modify source-code constructions (such as code blocks, classes, methods, protocols, etc.) as first-class objects at runtime.
+
+  - Convert a string matching the symbolic name of a class or function into a reference to or invocation of that class or function.
+
+  - Evaluate a string as if it were a source-code statement at runtime.
+
+  - Create a new interpreter for the language's bytecode to give a new meaning or purpose for a programming construct.
+
+
+- Java中的反射:
+
+载入指定的类, 获取构造函数, 字段和方法
+
+```java
+public class StringBuf {
+    public String str;
+    public String toUpper() {
+        return str.toUpperCase();
+    }
+}
+```
+
+```java
+	// 通过类名获取类
+	Class clazz = Class.forName("lzhou.learning.concurrency.concurrency.StringBuf");
+	
+	// 获取所有注释
+	Annotation[] annotations = clazz.getAnnotations();
+	Assert.assertEquals(1, annotations.length);
+	// 获取注释
+	Annotation deprecatedAnnotation = clazz.getAnnotation(Deprecated.class);
+	Assert.assertNotNull(deprecatedAnnotation);
+	
+	// 通过参数列表获取公有构造函数
+	StringBuf obj = (StringBuf) clazz.getConstructor(String.class).newInstance("Test");
+	
+	// 通过方法名名称和方法参数, 获取公有方法
+	String val = (String) clazz.getMethod("toUpperCase", new Class<?>[0]).invoke(obj);
+	Assert.assertEquals("TEST", val);
+	
+	// 通过名称获取公有字段
+    val = (String) clazz.getField("str").get(obj);
+    Assert.assertEquals("Test", val);
+```
+
+## JVM引用类型
+
+|   类型   | 回收时间 |            使用场景    |
+|----------|---------|-----------------------|
+|  强引用  | 一直存活，除非GC Roots不可达 | 所有程序的场景，基本对象，自定义对象等。 |
+|  软引用  | 内存不足时会被回收 | 一般用在对内存非常敏感的资源上，用作缓存的场景比较多 |
+|  弱引用  | 只能存活到下一次GC前 | 生命周期很短的对象，例如ThreadLocal中的Key。 |
+|  虚引用  | 随时会被回收， 创建了可能很快就会被回收 |  业界暂无使用场景， 可能被JVM团队内部用来跟踪JVM的垃圾回收活动 |
+
+[Java中的四种引用类型（强、软、弱、虚）](https://www.jianshu.com/p/ca6cbc246d20)
+
+## AOP 自我调用问题
+
+[Spring AOP中自我调用的问题](https://blog.csdn.net/zknxx/article/details/72585822)
+
+# Java并发
+
+## 并发性质
+
+- 原子性
+
+一个操作或者多个操作，要么全部执行并且执行的过程不会被任何因素打断，要么就都不执行。
+
+- 有序性
+
+即程序执行的顺序按照代码的先后顺序执行。
+
+- 可见性
+
+可见性是指当一个线程修改了共享变量后，其他线程能够立即得知这个修改。
+
+注: volatile关键字保证有序性和可见性, 但不保证原子性。 Synchronized关键字保证有序性, 可见性和保证原子性。
+
+## JVM线程状态
+
+![JVM thread state](img/jvm-thread-state.png)
+
 
 ## JVM结束线程的方法
 
@@ -302,65 +398,6 @@ public void run() {
 
 [Java多线程系列--“基础篇”09之 interrupt()和线程终止方式](https://www.cnblogs.com/skywang12345/p/3479949.html)
 
-## 反射 (Reflection)
-
-- 定义
-
-通过采用某种机制来实现对自己行为的描述（self-representation）和监测（examination），并能根据自身行为的状态和结果，调整或修改应用所描述行为的状态和相关的语义。
-
-- 实例
-
-Reflection allows inspection of classes, interfaces, fields and methods at runtime without knowing the names of the interfaces, fields, methods at compile time. It also allows instantiation of new objects and invocation of methods.
-
-  - Discover and modify source-code constructions (such as code blocks, classes, methods, protocols, etc.) as first-class objects at runtime.
-
-  - Convert a string matching the symbolic name of a class or function into a reference to or invocation of that class or function.
-
-  - Evaluate a string as if it were a source-code statement at runtime.
-
-  - Create a new interpreter for the language's bytecode to give a new meaning or purpose for a programming construct.
-
-
-- Java中的反射:
-
-载入指定的类, 获取构造函数, 字段和方法
-
-```java
-public class StringBuf {
-    public String str;
-    public String toUpper() {
-        return str.toUpperCase();
-    }
-}
-```
-
-```java
-	// 通过类名获取类
-	Class clazz = Class.forName("lzhou.learning.concurrency.concurrency.StringBuf");
-	
-	// 获取所有注释
-	Annotation[] annotations = clazz.getAnnotations();
-	Assert.assertEquals(1, annotations.length);
-	// 获取注释
-	Annotation deprecatedAnnotation = clazz.getAnnotation(Deprecated.class);
-	Assert.assertNotNull(deprecatedAnnotation);
-	
-	// 通过参数列表获取公有构造函数
-	StringBuf obj = (StringBuf) clazz.getConstructor(String.class).newInstance("Test");
-	
-	// 通过方法名名称和方法参数, 获取公有方法
-	String val = (String) clazz.getMethod("toUpperCase", new Class<?>[0]).invoke(obj);
-	Assert.assertEquals("TEST", val);
-	
-	// 通过名称获取公有字段
-    val = (String) clazz.getField("str").get(obj);
-    Assert.assertEquals("Test", val);
-```
-
-## AOP 自我调用问题
-
-[Spring AOP中自我调用的问题](https://blog.csdn.net/zknxx/article/details/72585822)
-
 ## ThreadLocal
 
 - 原理
@@ -419,18 +456,6 @@ key 使用弱引用：引用的ThreadLocal的对象被回收了，由于ThreadLo
 [ThreadLocal-面试必问深度解析](https://www.jianshu.com/p/98b68c97df9b)
 
 [ThreadLocal内存泄漏真因探究](https://www.jianshu.com/p/a1cd61fa22da)
-
-## JVM引用类型
-
-|   类型   | 回收时间 |            使用场景    |
-|----------|---------|-----------------------|
-|  强引用  | 一直存活，除非GC Roots不可达 | 所有程序的场景，基本对象，自定义对象等。 |
-|  软引用  | 内存不足时会被回收 | 一般用在对内存非常敏感的资源上，用作缓存的场景比较多 |
-|  弱引用  | 只能存活到下一次GC前 | 生命周期很短的对象，例如ThreadLocal中的Key。 |
-|  虚引用  | 随时会被回收， 创建了可能很快就会被回收 |  业界暂无使用场景， 可能被JVM团队内部用来跟踪JVM的垃圾回收活动 |
-
-[Java中的四种引用类型（强、软、弱、虚）](https://www.jianshu.com/p/ca6cbc246d20)
-
 
 # Spring Boot / Cloud
 
