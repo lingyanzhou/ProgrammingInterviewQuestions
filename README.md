@@ -159,22 +159,25 @@ class Singleton {
 
 ## 计算机语分类
 
-- 编译型和解释型
+- 编译型和解释型 (Compiled and Interpreted Languages)
   
   - 编译型语言首先是将源代码编译生成机器指令，再由机器运行机器码(二进制)
   - 解释型语言的源代码不是直接翻译成机器指令，而是先翻译成中间代码，再由解释器对中间代码进行解释运行。
 
-- 动态语言和静态语言
+- 动态语言和静态语言 (Dynamic and Static Languages)
 
   - 动态语言是一类在运行时可以改变其结构的语言。
   - 运行时结构不可变的语言就是静态语言。
 
-- 动态类型语言和静态类型语言
+- 动态类型语言和静态类型语言 (Dynamically Typed and Statically Typed Languages)
 
   - 动态类型语言在运行的时候（runtime）才检查数据类型。
   - 静态类型语言的数据类型是在编译期间确定的，编写代码的时候要明确确定变量的数据类型。
 
-- 强类型和弱类型语言
+- 强类型和弱类型语言 (Strongly Typed and Weakly Typed Languages)
+
+  - 强类型语言是强制数据类型定义的语言。也就是说，一旦一个变量被指定了某个数据类型，如果不经过强制转换，那么它就永远是这个数据类型了。
+  - 弱类型语言是数据类型可以被忽略的语言。它与强类型定义语言相反，一个变量可以赋不同数据类型的值。
 
 
 ## 函数式编程 (Functional Programming)
@@ -203,8 +206,9 @@ class Singleton {
 
 - 优点
 
-  - 代码更为简洁，可读性更强
-  - 减少了状态变量的声明与维护，适合高并发多线程任务
+  - 代码更为简洁，可读性更强。
+  - 接近自然语言，易于理解。
+  - 减少了状态变量的声明与维护，适合高并发多线程任务。
 
 - 缺点
 
@@ -490,6 +494,10 @@ key 使用弱引用：引用的ThreadLocal的对象被回收了，由于ThreadLo
 ## Spring Boot Runner 启动器
 
 []()
+
+## Spring MVC 流程
+
+![Spring MVC Flow](img/Spring-MVC-Flow.png)
 
 # Redis
 
