@@ -933,6 +933,8 @@ key 使用弱引用：引用的ThreadLocal的对象被回收了，由于ThreadLo
 
 # Spring Boot / Cloud
 
+## Cache
+
 ## Spring Boot Runner 启动器
 
 []()
