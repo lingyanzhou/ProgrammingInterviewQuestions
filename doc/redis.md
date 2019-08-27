@@ -25,11 +25,11 @@ Redis is an open source, in-memory data structure store, it can be used as a dat
 
 - String
 
-  Redis string is a sequence of bytes. Strings in Redis are binary safe.
+  Redis string is a sequence of bytes. Strings in Redis are binary safe. 
   
   Strings can store 3 types:
   
-  - byte strings,
+  - byte strings (Bitmaps),
   - integers,
   - floating point values.
   
@@ -63,16 +63,13 @@ Redis is an open source, in-memory data structure store, it can be used as a dat
 
 ## Redis高级数据结构
 
-- Bitmap
-
-  A subtype of String.
-
-- Pub/Sub
 - Hyperloglog
 
   HyperLogLog provides a very good approximation of the cardinality of a set even using a very small amount of memory around 12 kbytes per key with a standard error of 0.81%.
 
   *Note* : The maximum cardinality is approximately 2^64.
+  
+- Pub/Sub
 
 - Geo
 
@@ -80,20 +77,7 @@ Redis is an open source, in-memory data structure store, it can be used as a dat
 
 ## Redis Key Command
 
-|     Command             |  Description    |
-| DEL <key>               |  Deletes the key, if it exists.  |
-| EXISTS <key>             | Checks whether the key exists or not. |
-| MOVE key db              | Moves a key to another database. |
-| RENAME <key> <newKey>    | Changes the key name.  |
-| RENAMENX <key> <newKey>  | Renames the key, if the new key doesn't exist. |
-| TYPE <key>               | Returns the data type of the value stored in the key. |
-
-## Redis String Command
-
-- byte string operations:
-
 |     Command                |  Description    |
-|----------------------------|----------------------|
 | `DEL <key>`                |  Deletes the key, if it exists.  |
 | `EXISTS <key>`             | Checks whether the key exists or not. |
 | `MOVE <key> <db>`          | Moves a key to another database. |
@@ -101,7 +85,37 @@ Redis is an open source, in-memory data structure store, it can be used as a dat
 | `RENAMENX <key> <newKey>`  | Renames the key, if the new key doesn't exist. |
 | `TYPE <key>`               | Returns the data type of the value stored in the key. |
 
-- integer operations:
+## Redis String Command
+
+- Byte string operations:
+
+|     Command                |  Description    |
+|----------------------------|----------------------|
+| `GET <key>`                |  Gets the value.  |
+| `SET <key> <value>`                | Sets the value. |
+| `MGET <key> [<value> ...]`                |  Gets the values.  |
+| `MSET <key> <value> [<key> <value> ...]` | Sets the values. |
+| `GETSET <key> <value>`     | Sets the value and returns the old value. |
+| `STRLEN <key>`             | Gets the string length.  |
+| `APPEND <key> <value>`          | Appends a value. |
+| `GETRANGE <key> <start> <end>`    | Gets a substring of the string. Indices start from 0, and are inclusive. |
+| `SETRANGE <key> <offset> <value>`  | Overwrites the part of a string at the key starting at the specified offset. |
+| `SETNX <key> <value>`      | Sets the value if the key does not exist. |
+
+*Note*: Substring outside the byte string will be considered as an empty string.
+
+- Bitmap operations:.
+
+|     Command                |  Description    |
+|----------------------------|----------------------|
+| `GETBIT <key> <offset>`                |  Gets the bit value at the offset. |
+| `SETBIT <key> <offset> <value>`             | Sets the bit value at the offset. |
+| `BITCOUNT <key> [<start> <end>]`          | Count the number of 1-bit in the string (or in the specified range). |
+| `BITOP <key> <operation> <dest-key> <key> [<key> ...]`    | Applies bitwise operation (AND, OR, XOR, NOT) to specified keys, and stores the result in the `<dest-key>`. |
+
+*Note*: Bits outside the bitmap will be considered as 0.
+
+- Integer / floating point operations:
 
 |     Command             |  Description    |
 |-------------------------|----------------------|
@@ -111,17 +125,94 @@ Redis is an open source, in-memory data structure store, it can be used as a dat
 | `DECRBY <key> <amount>`              | Decrements the value by integer value `<amount>`; returns the new value. |
 | `INCRBYFLOAT <key> <amount>`              |  Increments the value by float value `<amount>`; returns the new value.  |
 
-- floating point operations:
+- String operations:
 
 |     Command             |  Description    |
 |-------------------------|----------------------|
 
-## Redis Hyperloglog Commands
+## Redis List Commands
 
-Redis HyperLogLog Commands
+- Non-blocking commands
+
+|     Command             |  Description    |
+|-------------------------|----------------------|
+| `RPUSH <key> <value> [<value> ...]`   | Pushes the values to the right (tail) of the list. |
+| `LPUSH <key> <value> [<value> ...]`   | Pushes the values to the left (head) of the list. |
+| `RPOP <key>`                          | Remove and retrieves the value from the right of the list. |
+| `LPOP <key>`                          | Remove and retrieves the value from the left of the list. |
+| `LINDEX <key> <offset>`               | Retrieves the element at the index. |
+| `LRANGE <key> <start> <end>`          | Gets the sublist from the specified range. |
+| `LTRIM <key> <start> <end>`           | Trims the list. Keeps the elements in the specified range (inclusive). |
+| `RPOPLPUSH <source-key> <dest-key>`   | Removes the rightmost value from `<source-key>`; push the value to the left of `<dest-key>`; and retrieves the value. If `<source-key>` is empty, nothing happens. |
+
+*Note*: When the list is empty, these commands return `Nil`.
+
+- Blocking commands
+
+|     Command                                      |  Description    |
+|--------------------------------------------------|----------------------|
+| `BRPOP <key> <timeout>`                          | Remove and retrieves the value from the right of the list. Or blocks for `<timeout>` seconds when the list is empty.  |
+| `BLPOP <key> <timeout>`                          | Remove and retrieves the value from the left of the list. Or blocks for `<timeout>` seconds when the list is empty. |
+| `BRPOPLPUSH <source-key> <dest-key> <timeout>`   | Removes the rightmost value from `<source-key>`; push the value to the left of `<dest-key>`; and retrieves the value. Or blocks for `<timeout>` seconds when `<source-key>` is empty. |
+
+## Redis Hash Commands
+
+|     Command                                           |  Description         |
+|-------------------------------------------------------|----------------------|
+| `HGET <key> <field>`                                  | Gets the hash field value. |
+| `HSET <key> <field> <value>`                          | Sets the hash field value.  |
+| `HSETNX <key> <field> <value>`                        | Sets the hash field value only if the field does not exist.  |
+| `HMGET <key> <field> [<field> ...]`                   | Gets one or more hash field values. |
+| `HMSET <key> <field> <value> [<field> <value> ...]`   | Sets one or more hash field values. |
+| `HDEL <key> <field>`                                  | Removes the hash field. |
+| `HLEN <key>`                                          | Gets the number of fields in a hash. |
+| `HEXISTS <key> <field>`                               | Determines whether a hash field exists or not. |
+| `HKEYS <key>`                                         | Gets all the field names in a hash. |
+| `HVALS <key>`                                         | Gets all the values in a hash. |
+| `HGETALL <key>`                                       | Gets all the field-value pairs in a hash. |
+| `HINCRBY <key> <field> <amount>`                      | Increments the integer value of a hash field by the given amount. |
+| `HINCRBYFLOAT <key> <field> <amount>`                 | Increments the float value of a hash field by the given amount. |
+
+## Redis Set Commands
+
+- Commands on a single set
+
+|     Command                                      |  Description         |
+|--------------------------------------------------|----------------------|
+| `SADD <key> <item> [<item> ...]`                 | Adds an element to a set. |
+| `SREM <key> <item> [<item> ...]`                 | Removes an element from a set. |
+| `SISMEMBER <key> <item>`                         | Determines whether an item is in a set. |
+| `SCARD <key> <item>`                             | Gets the cardinality in a set. |
+| `SMEMBERS <key>`                                 | Gets all the members in a set. |
+| `SRANDMEMBER <key> [<count>]`                    | Get 1 or `<count>` random members. If `<count> gt 0`, the members are unique. If `<count> lt 0`, the members may repeat.
+| `SPOP <key>`                                     | Randomly removes an element from a set; and returns the element. |
+| `SMOVE <source-key> <dest-key> <item>`           | If `<source-key>` has the element, removes the element from `<source-key>` and adds it to `<dest-key>`. Returns 1 on success, 0 otherwise.|
+
+- Commands on multiple sets
+
+|     Command                                      |  Description         |
+|--------------------------------------------------|----------------------|
+| `SDIFF <key1> [<key2> ...]`                      | Returns the items in  the first set `<key1>` but not in other sets. |
+| `SINTER <key1> [<key2> ...]`                     | Returns the items in all sets. |
+| `SUNION <key1> [<key2> ...]`                     | Returns the items in any sets. |
+| `SDIFFSTORE <dest-key> <key1> [<key2> ...]`      | Adds in the `<dest-key>` the items in the first set `<key1>` but not in other sets. |
+| `SINTERSTORE <dest-key> <key1> [<key2> ...]`     | Adds in the `<dest-key>` the items in all sets. |
+| `SUNIONSTORE <dest-key> <key1> [<key2> ...]`     | Adds in the `<dest-key>` the items in any sets.  |
+
+## Redis Ordered Set Commands
+
+|     Command             |  Description         |
+|-------------------------|----------------------|
+
+## Redis HyperLogLog Commands
 
 |     Command                 |  Description         |
 |-----------------------------|----------------------|
-| PFADD key element           |  Adds the specified elements to the specified HyperLogLog.  |
-| PPFCOUNT key                | Returns the approximated cardinality of the set(s) observed by the HyperLogLog at key(s).  |
-| PPFMERGE destkey sourcekey  | Merges N different HyperLogLogs into a single one.   |
+| `PFADD <key> <element>`           |  Adds the specified elements to the specified HyperLogLog.  |
+| `PPFCOUNT <key>`                | Returns the approximated cardinality of the set(s) observed by the HyperLogLog.  |
+| `PPFMERGE <destkey> <key> [<key> ...]`  | Merges different HyperLogLogs into a single one.   |
+
+## Redis Geo Commands
+
+|     Command             |  Description         |
+|-------------------------|----------------------|
