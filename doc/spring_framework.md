@@ -213,3 +213,15 @@ public class SelfCallServiceImpl implements SelfCallService, SelfCallWrapperServ
 ```
 
 [Spring AOP中自我调用的问题](https://blog.csdn.net/zknxx/article/details/72585822)
+
+## Spring Caching
+
+| Class / Annotation | Description |
+|--------------------|-------------|
+| `Cache`            | Cache Interface. Common implementations are `RedisCache`, `CaffeineCache`, Eh|
+| `CacheManager`      | 缓存管理器，管理各种缓存（cache）组件 |
+| `@Cacheable`        | 主要针对方法配置，能够根据方法的请求参数对其进行缓存    |
+| `@CacheEvict `      | 清空缓存                                           | 
+| `@CachePut`         | 保证方法被调用，又希望结果被缓存。 与@Cacheable区别在于是否每次都调用方法，常用于更新 |
+| `@EnableCaching`    | 开启基于注解的缓存                                  |
+| `@CacheConfig`      | 统一配置本类的缓存注解的属性                         |
