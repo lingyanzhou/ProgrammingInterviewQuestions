@@ -30,3 +30,7 @@
 
 [Redis](./doc/redis.md)
 
+# RabbitMQ
+
+[RabbitMQ](./doc/rabbitmq.md)
+
